@@ -39,12 +39,16 @@ jobs:
           terraform_version: ${{ env.TERRAFORM_VERSION }}
           terraform_wrapper: false
       
+      - name: Terraform version
+        run: terraform --version
+
       - name: Setup Terragrunt
         run: |
           mkdir bin
           wget -O bin/terragrunt https://github.com/gruntwork-io/terragrunt/releases/download/$TERRAGRUNT_VERSION/terragrunt_linux_amd64
           chmod +x bin/terragrunt
           echo "$GITHUB_WORKSPACE/bin" >> $GITHUB_PATH
+          bin/terragrunt -v
       
       - name: add SSH private key    
         uses: webfactory/ssh-agent@v0.9.0
@@ -54,10 +58,10 @@ jobs:
       - name: Plan All sandbox
         run: |
           cd env/sandbox
-          terragrunt run-all plan --terragrunt-non-interactive
+          terragrunt run-all plan -out tf.plan --terragrunt-non-interactive 
 
       - name: Apply All sandbox
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: |
           cd env/sandbox
-          terragrunt run-all apply --terragrunt-non-interactive    
+          terragrunt run-all apply tf.plan --terragrunt-non-interactive    
