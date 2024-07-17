@@ -3,10 +3,10 @@ variable "account_id" {
   type        = string
 }
 
-variable "env" {
-  description = "The current running environment"
-  type        = string
-}
+#variable "env" {
+#  description = "The current running environment"
+#  type        = string
+#}
 
 variable "region" {
   description = "The region to build infra in"

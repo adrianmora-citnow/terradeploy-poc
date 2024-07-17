@@ -7,7 +7,7 @@ inputs = merge(
   local.vars.inputs,
   local.secret_vars.inputs,
   {
-    region                    = "eu-central-1"
+    region = "eu-central-1"
   }
 )
 
