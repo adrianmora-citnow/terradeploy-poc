@@ -1,4 +1,4 @@
-name: "Terraform Infrastructure Change Management Pipeline with GitHub Actions"
+name: "Terragrunt infrastructure pipeline with GitHub Actions"
 
 on: 
   push: 
@@ -6,13 +6,13 @@ on:
     - main
     paths:
     - env/**
-    - modules/**
+    #- modules/**
   pull_request:
     branches:
     - main
     paths:
     - env/**
-    - modules/**
+    #- modules/**
 
 env: 
   TF_LOG: INFO
@@ -45,6 +45,11 @@ jobs:
           wget -O bin/terragrunt https://github.com/gruntwork-io/terragrunt/releases/download/$TERRAGRUNT_VERSION/terragrunt_linux_amd64
           chmod +x bin/terragrunt
           echo "$GITHUB_WORKSPACE/bin" >> $GITHUB_PATH
+      
+      - name: add SSH private key    
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
       - name: Plan All sandbox
         run: |
