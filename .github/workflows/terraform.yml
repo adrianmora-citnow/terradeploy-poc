@@ -21,9 +21,13 @@ env:
   TERRAGRUNT_VERSION: v0.55.1
 
 jobs:
-  terragrunt-plan-all-sandbox:
-    name: "terragrunt-plan-all-sandbox"
+  sandbox-plan:
+    name: "sandbox-plan"
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        aws_region: [eu-central-1]
+        cin_region: [de, eu]
     env:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -52,23 +56,31 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
+      - name: Create artifacts directories
+        run: |
+          mkdir -p ${{ matrix.aws_region }}/${{ matrix.cin_region }}
+
       - name: Plan All sandbox
         run: |
-          cd env/sandbox
-          terragrunt run-all plan -out $GITHUB_WORKSPACE/plan.tfplan --terragrunt-non-interactive
+          cd env/sandbox/${{ matrix.aws_region }}/${{ matrix.cin_region }}
+          terragrunt run-all plan -out $GITHUB_WORKSPACE/${{ matrix.aws_region }}/${{ matrix.cin_region }}/plan.tfplan --terragrunt-non-interactive
        
       - name: Publish Terraform Plan
         uses: actions/upload-artifact@v4
         with:
-          name: tfplan
-          path: plan.tfplan    
+          name: ${{ matrix.aws_region }}-${{ matrix.cin_region }}
+          path: ${{ matrix.aws_region }}/${{ matrix.cin_region }}/plan.tfplan    
 
 
-  terragrunt-apply-all-sandbox:
-    name: "terragrunt-apply-all-sandbox"
+  sandbox-apply:
+    name: "sandbox-apply"
     needs:
-      - terragrunt-plan-all-sandbox
+      - sandbox-plan
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        aws_region: [eu-central-1]
+        cin_region: [de, eu]
     env:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -100,9 +112,10 @@ jobs:
       - name: Download Terraform Plan
         uses: actions/download-artifact@v4
         with:
-          name: tfplan
+          name: ${{ matrix.aws_region }}-${{ matrix.cin_region }}
+          path: ${{ matrix.aws_region }}/${{ matrix.cin_region }} 
 
       - name: Apply All sandbox
         run: |
-          cd env/sandbox
-          terragrunt run-all apply $GITHUB_WORKSPACE/plan.tfplan --terragrunt-non-interactive
+          cd env/sandbox/${{ matrix.aws_region }}/${{ matrix.cin_region }}
+          terragrunt run-all apply $GITHUB_WORKSPACE/${{ matrix.aws_region }}/${{ matrix.cin_region }}/plan.tfplan --terragrunt-non-interactive
