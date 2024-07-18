@@ -1,6 +1,6 @@
 locals {
-  vars        = read_terragrunt_config("../env_vars.hcl")
-  secret_vars = try(read_terragrunt_config("../secret_env_vars.hcl"), { inputs = {} })
+  vars        = read_terragrunt_config("../../../env_vars.hcl")
+  secret_vars = try(read_terragrunt_config("../../../secret_env_vars.hcl"), { inputs = {} })
 }
 
 inputs = merge(
@@ -35,4 +35,15 @@ generate "common_variables" {
   path      = "common_variables.tf"
   if_exists = "overwrite"
   contents  = file("./common/common_variables.tf")
+}
+
+terraform {
+  extra_arguments "bucket" {
+    commands = get_terraform_commands_that_need_vars()
+    optional_var_files = [
+        "${find_in_parent_folders("account.hcl", "ignore")}",
+        "${find_in_parent_folders("region.hcl", "ignore")}",
+        "${find_in_parent_folders("cin_region.hcl", "ignore")}"
+    ]
+  }
 }
