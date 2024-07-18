@@ -4,5 +4,6 @@ include {
 
 terraform {
   #source = "../../../modules//sg"
-  source = "git::git@github.com:adrianmora-citnow/terraform_modules-poc.git//sg?ref=1.0.0"
+  #source = "git::git@github.com:adrianmora-citnow/terraform_modules-poc.git//sg?ref=1.0.0"
+  source = "git::git@github.com:adrianmora-citnow/terraform_modules-poc.git//sg?ref=update_module"
 }
