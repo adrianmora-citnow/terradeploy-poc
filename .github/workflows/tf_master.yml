@@ -1,0 +1,52 @@
+name: "Terragrunt infrastructure pipeline with GitHub Actions"
+
+on:
+  push: 
+    branches:
+    - main
+    paths:
+    - env/**
+    #- modules/**   
+  pull_request:
+    branches:
+    - main
+    paths:
+    - env/**
+    #- modules/**
+
+jobs:
+  sandbox:
+    strategy:
+      fail-fast: false
+      matrix:
+        aws_region: [eu-central-1]
+        cin_region: [de, eu]
+    uses: adrianmora-citnow/terradeploy-poc/.github/workflows/tf_common.yml@feature_e
+    with:
+      aws_region: ${{ matrix.aws_region }}
+      cin_region: ${{ matrix.cin_region }}
+    secrets: inherit
+
+  #sandbox-plan:
+  #  strategy:
+  #    matrix:
+  #      aws_region: [eu-central-1]
+  #      cin_region: [de, eu]
+  #  uses: adrianmora-citnow/terradeploy-poc/.github/workflows/tf_plan.yml@feature_e
+  #  with:
+  #    aws_region: ${{ matrix.aws_region }}
+  #    cin_region: ${{ matrix.cin_region }}
+  #  secrets: inherit
+  
+  #sandbox-apply:
+  #  strategy:
+  #    matrix:
+  #      aws_region: [eu-central-1]
+  #      cin_region: [de, eu]
+  #  uses: adrianmora-citnow/terradeploy-poc/.github/workflows/tf_apply.yml@feature_e
+  #  needs:
+  #    - sandbox-plan
+  #  with:
+  #    aws_region: ${{ matrix.aws_region }}
+  #    cin_region: ${{ matrix.cin_region }}
+  #  secrets: inherit
