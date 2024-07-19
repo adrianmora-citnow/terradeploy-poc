@@ -12,20 +12,109 @@ on:
     - main
     paths:
     - env/**
+    - .github/**
     #- modules/**
 
 jobs:
-  sandbox:
-    strategy:
-      fail-fast: false
-      matrix:
-        aws_region: [eu-central-1]
-        cin_region: [de, eu]
-    uses: adrianmora-citnow/terradeploy-poc/.github/workflows/tf_common.yml@feature_e
+  #plan-sandbox-eu-central-1-de-sg:
+  #  uses: adrianmora-citnow/terradeploy-poc/.github/workflows/tf_plan.yml@feature_f
+  #  with:
+  #    aws_region: eu-central-1
+  #    cin_region: de
+  #    resource: sg
+  #  secrets: inherit
+
+  #apply-sandbox-eu-central-1-de-sg:
+  #  uses: adrianmora-citnow/terradeploy-poc/.github/workflows/tf_apply.yml@feature_f
+  #  needs:
+  #    - plan-sandbox-eu-central-1-de-sg
+  #  with:
+  #    aws_region: eu-central-1
+  #    cin_region: de
+  #    resource: sg
+  #  secrets: inherit  
+
+  sandbox-eu-central-1-de-sg:
+    uses: adrianmora-citnow/terradeploy-poc/.github/workflows/tf_common.yml@feature_f
     with:
-      aws_region: ${{ matrix.aws_region }}
-      cin_region: ${{ matrix.cin_region }}
+      aws_region: eu-central-1
+      cin_region: de
+      resource: sg
     secrets: inherit
+
+  sandbox-eu-central-1-de-log:
+    uses: adrianmora-citnow/terradeploy-poc/.github/workflows/tf_common.yml@feature_f
+    with:
+      aws_region: eu-central-1
+      cin_region: de
+      resource: log
+    secrets: inherit
+  
+  sandbox-eu-central-1-eu-log:
+    uses: adrianmora-citnow/terradeploy-poc/.github/workflows/tf_common.yml@feature_f
+    with:
+      aws_region: eu-central-1
+      cin_region: eu
+      resource: log
+    secrets: inherit  
+
+  sandbox-eu-central-1-eu-sg:
+    uses: adrianmora-citnow/terradeploy-poc/.github/workflows/tf_common.yml@feature_f
+    with:
+      aws_region: eu-central-1
+      cin_region: eu
+      resource: sg
+    secrets: inherit
+
+  #plan-sandbox-eu-central-1-eu-log:
+  #  uses: adrianmora-citnow/terradeploy-poc/.github/workflows/tf_plan.yml@feature_f
+  #  with:
+  #    aws_region: eu-central-1
+  #    cin_region: eu
+  #    resource: log
+  #  secrets: inherit
+
+  #apply-sandbox-eu-central-1-eu-log:
+  #  uses: adrianmora-citnow/terradeploy-poc/.github/workflows/tf_apply.yml@feature_f
+  #  needs:
+  #    - plan-sandbox-eu-central-1-eu-log
+  #  with:
+  #    aws_region: eu-central-1
+  #    cin_region: eu
+  #    resource: log
+  #  secrets: inherit   
+
+  sandbox-eu-west-1-mb-sg:
+    uses: adrianmora-citnow/terradeploy-poc/.github/workflows/tf_common.yml@feature_f
+    with:
+      aws_region: eu-west-1
+      cin_region: mb
+      resource: sg
+    secrets: inherit
+
+  sandbox-eu-west-1-mb-log:
+    uses: adrianmora-citnow/terradeploy-poc/.github/workflows/tf_common.yml@feature_f
+    with:
+      aws_region: eu-west-1
+      cin_region: mb
+      resource: log
+    secrets: inherit   
+
+  sandbox-eu-west-2-uk-sg:
+    uses: adrianmora-citnow/terradeploy-poc/.github/workflows/tf_common.yml@feature_f
+    with:
+      aws_region: eu-west-2
+      cin_region: uk
+      resource: sg
+    secrets: inherit  
+
+  sandbox-eu-west-2-uk-log:
+    uses: adrianmora-citnow/terradeploy-poc/.github/workflows/tf_common.yml@feature_f
+    with:
+      aws_region: eu-west-2
+      cin_region: uk
+      resource: log
+    secrets: inherit  
 
   #sandbox-plan:
   #  strategy:

@@ -8,7 +8,11 @@ on:
       cin_region:
         description: "CIN region"
         required: true
-        type: string 
+        type: string
+      resource:
+        description: "TF module"
+        required: true
+        type: string  
 
 env: 
   TF_LOG: INFO
@@ -20,8 +24,8 @@ env:
   AWS_REGION: eu-central-1
 
 jobs:
-  tf-plan:
-    name: "tf-plan"
+  plan:
+    name: "plan"
     runs-on: ubuntu-latest
     steps:
       - name: Checkout the repository to the runner
@@ -48,24 +52,24 @@ jobs:
 
       - name: Create artifacts directories
         run: |
-          mkdir -p ${{ inputs.aws_region }}/${{ inputs.cin_region }}
+          mkdir -p ${{ inputs.aws_region }}/${{ inputs.cin_region }}/${{ inputs.resource }}
 
       - name: Plan All sandbox
         run: |
-          cd env/sandbox/${{ inputs.aws_region }}/${{ inputs.cin_region }}
-          terragrunt run-all plan -out $GITHUB_WORKSPACE/${{ inputs.aws_region }}/${{ inputs.cin_region }}/plan.tfplan --terragrunt-non-interactive
+          cd env/sandbox/${{ inputs.aws_region }}/${{ inputs.cin_region }}/${{ inputs.resource }}
+          terragrunt run-all plan -out $GITHUB_WORKSPACE/${{ inputs.aws_region }}/${{ inputs.cin_region }}/${{ inputs.resource }}/plan.tfplan --terragrunt-non-interactive
        
       - name: Publish Terraform Plan
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ inputs.aws_region }}-${{ inputs.cin_region }}
-          path: ${{ inputs.aws_region }}/${{ inputs.cin_region }}/plan.tfplan    
+          name: ${{ inputs.aws_region }}-${{ inputs.cin_region }}-${{ inputs.resource }}
+          path: ${{ inputs.aws_region }}/${{ inputs.cin_region }}/${{ inputs.resource }}/plan.tfplan    
 
 
-  tf-apply:
-    name: "tf-apply"
+  apply:
+    name: "apply"
     needs:
-      - tf-plan
+      - plan
     runs-on: ubuntu-latest
     environment:
       name: sandbox
@@ -95,10 +99,10 @@ jobs:
       - name: Download Terraform Plan
         uses: actions/download-artifact@v4
         with:
-          name: ${{ inputs.aws_region }}-${{ inputs.cin_region }}
-          path: ${{ inputs.aws_region }}/${{ inputs.cin_region }} 
+          name: ${{ inputs.aws_region }}-${{ inputs.cin_region }}-${{ inputs.resource }}
+          path: ${{ inputs.aws_region }}/${{ inputs.cin_region }}/${{ inputs.resource }} 
 
       - name: Apply All sandbox
         run: |
-          cd env/sandbox/${{ inputs.aws_region }}/${{ inputs.cin_region }}
-          terragrunt run-all apply $GITHUB_WORKSPACE/${{ inputs.aws_region }}/${{ inputs.cin_region }}/plan.tfplan --terragrunt-non-interactive
+          cd env/sandbox/${{ inputs.aws_region }}/${{ inputs.cin_region }}/${{ inputs.resource }}
+          terragrunt run-all apply $GITHUB_WORKSPACE/${{ inputs.aws_region }}/${{ inputs.cin_region }}/${{ inputs.resource }}/plan.tfplan --terragrunt-non-interactive

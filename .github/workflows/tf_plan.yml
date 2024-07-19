@@ -8,7 +8,11 @@ on:
       cin_region:
         description: "CIN region"
         required: true
-        type: string 
+        type: string
+      resource:
+        description: "TF module"
+        required: true
+        type: string  
 
 env: 
   TF_LOG: INFO
@@ -48,15 +52,15 @@ jobs:
 
       - name: Create artifacts directories
         run: |
-          mkdir -p ${{ inputs.aws_region }}/${{ inputs.cin_region }}
+          mkdir -p ${{ inputs.aws_region }}/${{ inputs.cin_region }}/${{ inputs.resource }}
 
       - name: Plan All sandbox
         run: |
-          cd env/sandbox/${{ inputs.aws_region }}/${{ inputs.cin_region }}
-          terragrunt run-all plan -out $GITHUB_WORKSPACE/${{ inputs.aws_region }}/${{ inputs.cin_region }}/plan.tfplan --terragrunt-non-interactive
+          cd env/sandbox/${{ inputs.aws_region }}/${{ inputs.cin_region }}/${{ inputs.resource }}
+          terragrunt run-all plan -out $GITHUB_WORKSPACE/${{ inputs.aws_region }}/${{ inputs.cin_region }}/${{ inputs.resource }}/plan.tfplan --terragrunt-non-interactive
        
       - name: Publish Terraform Plan
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ inputs.aws_region }}-${{ inputs.cin_region }}
-          path: ${{ inputs.aws_region }}/${{ inputs.cin_region }}/plan.tfplan
+          name: ${{ inputs.aws_region }}-${{ inputs.cin_region }}-${{ inputs.resource }}
+          path: ${{ inputs.aws_region }}/${{ inputs.cin_region }}/${{ inputs.resource }}/plan.tfplan
