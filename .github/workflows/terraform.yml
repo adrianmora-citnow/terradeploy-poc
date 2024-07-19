@@ -77,6 +77,8 @@ jobs:
     needs:
       - sandbox-plan
     runs-on: ubuntu-latest
+    environment:
+      name: sandbox
     strategy:
       matrix:
         aws_region: [eu-central-1]
