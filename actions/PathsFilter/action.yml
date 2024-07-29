@@ -1,0 +1,39 @@
+name: "Filter code changes"
+description: "Filter directory paths looking for code changes made to hcl files"
+
+inputs:
+  aws_region:
+    description: "AWS region"
+    required: true
+    type: string
+  cin_region:
+    description: "CIN region"
+    required: true
+    type: string
+  resource:
+    description: "TF module"
+    required: true
+    type: string  
+outputs:
+  config_changes:
+    description: "Code changes detected"
+    value: ${{ steps.filter.outputs.config_changes }}
+
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/checkout@v4
+    - uses: dorny/paths-filter@v3
+      id: filter
+      with:
+        filters: |
+          config_changes:
+              - 'env/sandbox/${{inputs.aws_region}}/${{inputs.cin_region}}/${{inputs.resource}}/**'
+    - name: test changes
+      if: steps.filter.outputs.config == 'true'
+      shell: bash
+      run: echo "YES - changes to the code"
+    - name: test no changes
+      if: steps.filter.outputs.config != 'true'
+      shell: bash
+      run: echo "NO - no changes to the code"   

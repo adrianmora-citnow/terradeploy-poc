@@ -1,0 +1,134 @@
+name: "Terragrunt infrastructure pipeline with GitHub Actions"
+#name: "Terragrunt infrastructure pipeline for SG Terraform module in SANDBOX environment"
+
+on:
+  push: 
+    branches:
+    - main
+    paths:
+    - env/**
+    #- modules/**  
+  pull_request:
+    branches:
+    - main
+    paths:
+    #- env/**
+    - env/**/sg/*
+    #- .github/**
+    #- modules/**
+
+env:
+  resource: sg
+
+jobs:  
+  paths-filter-sandbox-eu-central-1-de:
+    runs-on: ubuntu-latest
+    outputs: 
+      trigger_job: ${{ steps.filter-code-changes.outputs.config_changes }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Filter code changes
+        uses: ./actions/PathsFilter
+        id: filter-code-changes
+        with:
+          aws_region: eu-central-1
+          cin_region: de
+          resource: ${{ env.resource }}
+      - name: echo output from filter-code-changes
+        run: |
+          echo ${{ steps.filter-code-changes.outputs.config_changes }}        
+
+  sandbox-eu-central-1-de:
+    needs: paths-filter-sandbox-eu-central-1-de
+    if: needs.paths-filter-sandbox-eu-central-1-de.outputs.trigger_job == 'true'
+    uses: adrianmora-citnow/terradeploy-poc/.github/workflows/tf_common.yml@feature_g
+    with:
+      environment: sandbox
+      aws_region: eu-central-1
+      cin_region: de
+      resource: sg
+    secrets: inherit
+
+  paths-filter-sandbox-eu-central-1-eu:
+    runs-on: ubuntu-latest
+    outputs: 
+      trigger_job: ${{ steps.filter-code-changes.outputs.config_changes }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Filter code changes
+        uses: ./actions/PathsFilter
+        id: filter-code-changes
+        with:
+          aws_region: eu-central-1
+          cin_region: eu
+          resource: ${{ env.resource }}
+      - name: echo output from filter-code-changes
+        run: |
+          echo ${{ steps.filter-code-changes.outputs.config_changes }}   
+
+  sandbox-eu-central-1-eu:
+    needs: paths-filter-sandbox-eu-central-1-eu
+    if: needs.paths-filter-sandbox-eu-central-1-eu.outputs.trigger_job == 'true'
+    uses: adrianmora-citnow/terradeploy-poc/.github/workflows/tf_common.yml@feature_g
+    with:
+      environment: sandbox
+      aws_region: eu-central-1
+      cin_region: eu
+      resource: sg
+    secrets: inherit
+
+  paths-filter-sandbox-eu-west-1-mb:
+    runs-on: ubuntu-latest
+    outputs: 
+      trigger_job: ${{ steps.filter-code-changes.outputs.config_changes }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Filter code changes
+        uses: ./actions/PathsFilter
+        id: filter-code-changes
+        with:
+          aws_region: eu-west-1
+          cin_region: mb
+          resource: ${{ env.resource }}
+      - name: echo output from filter-code-changes
+        run: |
+          echo ${{ steps.filter-code-changes.outputs.config_changes }}   
+
+  sandbox-eu-west-1-mb:
+    needs: paths-filter-sandbox-eu-west-1-mb
+    if: needs.paths-filter-sandbox-eu-west-1-mb.outputs.trigger_job == 'true'
+    uses: adrianmora-citnow/terradeploy-poc/.github/workflows/tf_common.yml@feature_g
+    with:
+      environment: sandbox
+      aws_region: eu-west-1
+      cin_region: mb
+      resource: sg
+    secrets: inherit
+
+  paths-filter-sandbox-eu-west-2-uk:
+    runs-on: ubuntu-latest
+    outputs: 
+      trigger_job: ${{ steps.filter-code-changes.outputs.config_changes }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Filter code changes
+        uses: ./actions/PathsFilter
+        id: filter-code-changes
+        with:
+          aws_region: eu-west-2
+          cin_region: uk
+          resource: ${{ env.resource }}
+      - name: echo output from filter-code-changes
+        run: |
+          echo ${{ steps.filter-code-changes.outputs.config_changes }}   
+
+  sandbox-eu-west-2-uk:
+    needs: paths-filter-sandbox-eu-west-2-uk
+    if: needs.paths-filter-sandbox-eu-west-2-uk.outputs.trigger_job == 'true'
+    uses: adrianmora-citnow/terradeploy-poc/.github/workflows/tf_common.yml@feature_g
+    with:
+      environment: sandbox
+      aws_region: eu-west-2
+      cin_region: uk
+      resource: sg
+    secrets: inherit  
