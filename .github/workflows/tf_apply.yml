@@ -8,7 +8,11 @@ on:
       cin_region:
         description: "CIN region"
         required: true
-        type: string 
+        type: string
+      resource:
+        description: "TF module"
+        required: true
+        type: string   
 
 env: 
   TF_LOG: INFO
@@ -51,10 +55,10 @@ jobs:
       - name: Download Terraform Plan
         uses: actions/download-artifact@v4
         with:
-          name: ${{ inputs.aws_region }}-${{ inputs.cin_region }}
-          path: ${{ inputs.aws_region }}/${{ inputs.cin_region }} 
+          name: ${{ inputs.aws_region }}-${{ inputs.cin_region }}-${{ inputs.resource }}
+          path: ${{ inputs.aws_region }}/${{ inputs.cin_region }}/${{ inputs.resource }}
 
       - name: Apply All sandbox
         run: |
-          cd env/sandbox/${{ inputs.aws_region }}/${{ inputs.cin_region }}
-          terragrunt run-all apply $GITHUB_WORKSPACE/${{ inputs.aws_region }}/${{ inputs.cin_region }}/plan.tfplan --terragrunt-non-interactive
+          cd env/sandbox/${{ inputs.aws_region }}/${{ inputs.cin_region }}/${{ inputs.resource }}
+          terragrunt run-all apply $GITHUB_WORKSPACE/${{ inputs.aws_region }}/${{ inputs.cin_region }}/${{ inputs.resource }}/plan.tfplan --terragrunt-non-interactive
