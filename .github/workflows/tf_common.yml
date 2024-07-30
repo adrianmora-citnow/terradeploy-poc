@@ -1,6 +1,10 @@
 on:
   workflow_call:
     inputs:
+      environment:
+        description: "Environment to deploy"
+        required: true
+        type: string
       aws_region:
         description: "AWS region"
         required: true
@@ -72,7 +76,7 @@ jobs:
       - plan
     runs-on: ubuntu-latest
     environment:
-      name: sandbox
+      name: ${{ inputs.environment}}
     steps:
       - name: Checkout the repository to the runner
         uses: actions/checkout@v2
