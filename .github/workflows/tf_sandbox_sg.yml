@@ -1,5 +1,5 @@
-name: "Terragrunt infrastructure pipeline with GitHub Actions"
-#name: "Terragrunt infrastructure pipeline for SG Terraform module in SANDBOX environment"
+#name: "Terragrunt infrastructure pipeline with GitHub Actions"
+name: "Terragrunt infrastructure pipeline for SG Terraform module in SANDBOX environment"
 
 on:
   push: 
@@ -41,7 +41,7 @@ jobs:
   sandbox-eu-central-1-de:
     needs: paths-filter-sandbox-eu-central-1-de
     if: needs.paths-filter-sandbox-eu-central-1-de.outputs.trigger_job == 'true'
-    uses: adrianmora-citnow/terradeploy-poc/.github/workflows/tf_common.yml@feature_g
+    uses: adrianmora-citnow/terradeploy-poc/.github/workflows/tf_common.yml@main
     with:
       environment: sandbox
       aws_region: eu-central-1
@@ -69,7 +69,7 @@ jobs:
   sandbox-eu-central-1-eu:
     needs: paths-filter-sandbox-eu-central-1-eu
     if: needs.paths-filter-sandbox-eu-central-1-eu.outputs.trigger_job == 'true'
-    uses: adrianmora-citnow/terradeploy-poc/.github/workflows/tf_common.yml@feature_g
+    uses: adrianmora-citnow/terradeploy-poc/.github/workflows/tf_common.yml@main
     with:
       environment: sandbox
       aws_region: eu-central-1
@@ -97,7 +97,7 @@ jobs:
   sandbox-eu-west-1-mb:
     needs: paths-filter-sandbox-eu-west-1-mb
     if: needs.paths-filter-sandbox-eu-west-1-mb.outputs.trigger_job == 'true'
-    uses: adrianmora-citnow/terradeploy-poc/.github/workflows/tf_common.yml@feature_g
+    uses: adrianmora-citnow/terradeploy-poc/.github/workflows/tf_common.yml@main
     with:
       environment: sandbox
       aws_region: eu-west-1
@@ -125,7 +125,7 @@ jobs:
   sandbox-eu-west-2-uk:
     needs: paths-filter-sandbox-eu-west-2-uk
     if: needs.paths-filter-sandbox-eu-west-2-uk.outputs.trigger_job == 'true'
-    uses: adrianmora-citnow/terradeploy-poc/.github/workflows/tf_common.yml@feature_g
+    uses: adrianmora-citnow/terradeploy-poc/.github/workflows/tf_common.yml@main
     with:
       environment: sandbox
       aws_region: eu-west-2
